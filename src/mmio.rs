@@ -21,7 +21,7 @@ pub struct ReadWrite<T: Copy> {
 
 impl<T: Copy> ReadWrite<T> {
     #[inline(always)]
-    pub fn read(&self) -> {
+    pub fn read(&self) -> T {
         unsafe { read_volatile(self.value.get()) }
     }
 
@@ -47,7 +47,7 @@ pub struct Uart {
 }
 
 impl Uart {
-    pub const fn new() -> {
+pub const fn new() -> Self {
         Self {
             base_addr: PL011_UART_BASE,
         }
@@ -76,7 +76,7 @@ impl Uart {
     }
 }
 
-imlp fmt::Write for Uart {
+impl fmt::Write for Uart {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         self.puts(s);
         Ok(())
@@ -89,7 +89,7 @@ pub fn read_hardware_ticks() -> u64 {
     unsafe {
         core::arch::asm!(
             "isb",
-            "mrs {0}, cntpct_el10",
+            "mrs {0}, cntpct_el0",
             out(reg) ticks,
             options(nomem, nostack)
         );
