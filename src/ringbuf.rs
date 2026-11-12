@@ -63,7 +63,7 @@ impl TelemtryFrame {
 pub const RING_CAPACITY: usize = 16;
 
 pub struct SpscRingBuffer {
-    buffer: [UnsafeCell<TelemtryFrame]; RING_CAPACITY],
+    buffer: [UnsafeCell<TelemtryFrame>; RING_CAPACITY],
     head: AtomicUsize,
     tail: AtomicUsize,
 }
@@ -99,7 +99,7 @@ impl SpscRingBuffer {
     pub fn pop(&self) -> Option<TelemtryFrame> {
         let current_tail = self.tail.load(Ordering::Relaxed);
 
-        if current_tail == self.tail.load(Ordering::Relaxed) {
+        if current_tail == self.head.load(Ordering::Acquire) {
             return None;
         }
 
